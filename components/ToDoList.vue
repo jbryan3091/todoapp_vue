@@ -1,19 +1,30 @@
 <template>
   <div class="to-do-container">
     <div class="create-container">
-      <input v-model="titleOfNewToDo" type="text" />
-      <button @click="create">Add</button>
+      <!-- <button @click="create">
+        Add
+      </button> -->
+
+      <div id="video_box">
+          
+          <div id="lightOne" @click="toggleLight(1)">1</div>
+          <div id="lightTwo" @click="toggleLight(2)">2</div>
+          <div id="lightThree" @click="toggleLight(3)">3</div>
+          <div id="video">
+              <img style="-webkit-user-select: none;margin: auto;" 
+                src="http://dawn.ii.uam.es/mjpg/video.mjpg" width="411" height="308">
+          </div>
+      </div>
     </div>
     <div class="to-do-list-container">
-      <to-do-list-item v-for="todo in todos" :key="todo.id" :todo="todo" v-on:delete="deleteItem" />
     </div>
   </div>
+
 </template>
-
-
 
 <script>
 import ToDoListItem from "~/components/ToDoListItem.vue";
+import axios from 'axios'
 
 export default {
   components: {
@@ -28,71 +39,92 @@ export default {
     }
   },
   data() {
-    return {
-      titleOfNewToDo: ""
-    };
+    return {};
   },
   methods: {
-    create() {
-      this.todos.push({
-        id: this.titleOfNewToDo,
-        title: this.titleOfNewToDo,
-        completed: false
-      });
-      this.titleOfNewToDo = "";
-    },
-    deleteItem (item) {
-      this.todos.splice(this.todos.indexOf(item), 1)
+    toggleLight(light) {
+
+      axios.get(`https://us-central1-touchlightbr.cloudfunctions.net/app/api/v1/light/${light}/status`)
+        .then((res) => {
+          console.log("passo 1", res.data.status)
+          let status = 0;
+          if (res.data.status === "0") {
+            status = 1
+          }
+          return status
+        })
+        .then((status) => {
+          console.log("passo 2", status)
+          axios.post(`https://us-central1-touchlightbr.cloudfunctions.net/app/api/v1/light/${light}/value/${status}`)
+            .then((res) => {
+              //console.log(res)
+              return
+            })
+            .catch((err) => {
+              console.log(err)
+            })
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+
+
+
     }
+  },
+  asyncData ({ light, value }) {
+
   }
 };
 </script>
 
 <style lang="scss">
-.to-do-container {
-  width: 400px;
-  margin: auto;
-  margin-top: 50px;
-  display: block;
-
-  .create-container {
-    width: 100%;
-    height: 50px;
-    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
-
-    input {
-      height: 50px;
-      width: 250px;
-      border: none;
-      padding-left: 10px;
-      font-family: "Quicksand", "Source Sans Pro", -apple-system,
-        BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial,
-        sans-serif;
-      font-size: 18px;
-      &:focus {
-        outline: none;
-      }
-    }
-
-    button {
-      height: 45px;
-      width: 145px;
-      border: none;
-      cursor: pointer;
-      text-align: right;
-      padding-right: 20px;
-      font-size: 18px;
-      &:focus {
-        outline: none;
-      }
-    }
-  }
+#video {
+  margin-top: 2em;
 }
-.to-do-list-container {
-  width: 400px;
-  margin: auto;
-  margin-top: 50px;
-  display: block;
-  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
+
+#video_box{
+    float:left;
+}
+#lightOne {
+  border-style: dashed;
+  border-width: thin;
+  border-color: red;
+  position:absolute;
+  float:left;
+  width:40px;
+  min-height:40px;
+  background-color: #0000ff61;
+  z-index:300000;
+  top: 308px;
+  left: 100px;
+}
+
+#lightTwo {
+  border-style: dashed;
+  border-width: thin;
+  border-color: red;
+  position:absolute;
+  float:left;
+  width:40px;
+  min-height:40px;
+  background-color: #0000ff61;
+  z-index:300000;
+  top: 308px;
+  left: 240px;
+}
+
+#lightThree {
+  border-style: dashed;
+  border-width: thin;
+  border-color: red;
+  position:absolute;
+  float:left;
+  width:40px;
+  min-height:40px;
+  background-color: #0000ff61;
+  z-index:300000;
+  top: 308px;
+  left: 160px;
 }
 </style>
