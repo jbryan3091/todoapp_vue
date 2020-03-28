@@ -17,6 +17,14 @@ export default {
         return {};
       }
     }
+  },
+  methods: {
+    completeItem() {
+      this.todo.completed = true;
+    },
+    deleteItem() {
+      this.$emit("delete", this.todo);
+    }
   }
 };
 </script>

@@ -41,12 +41,8 @@ export default {
       });
       this.titleOfNewToDo = "";
     },
-    completeItem() {
-      this.todo.completed = true;
-    },
-    deleteItem() {
-      this.$emit("delete", this.todo);
-      this.todos.splice(this.todos.indexOf(item), 1);
+    deleteItem (item) {
+      this.todos.splice(this.todos.indexOf(item), 1)
     }
   }
 };
